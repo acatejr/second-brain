@@ -14,20 +14,22 @@ services:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
     command: --config /app/config.yaml --port 4000 --num_workers 8
-    depends_on:
-      - postgres
+    # depends_on:
+    #   - postgres
+    networks:
+      - mystack-infrastructure_mystack-network
     restart: unless-stopped
 
-  postgres:
-    image: postgres:16-alpine
-    container_name: litellm-postgres
-    environment:
-      - POSTGRES_DB=litellm
-      - POSTGRES_USER=llmproxy
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-    volumes:
-      - postgres-data:/var/lib/postgresql/data
-    restart: unless-stopped
+  # postgres:
+  #   image: postgres:16-alpine
+  #   container_name: litellm-postgres
+  #   environment:
+  #     - POSTGRES_DB=litellm
+  #     - POSTGRES_USER=llmproxy
+  #     - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+  #   volumes:
+  #     - postgres-data:/var/lib/postgresql/data
+  #   restart: unless-stopped
 
   open-webui:
     image: ghcr.io/open-webui/open-webui:main-slim
@@ -48,3 +50,8 @@ services:
 volumes:
   open-webui:
   postgres-data:
+
+networks:
+  mystack-infrastructure_mystack-network:
+    external: true
+  
